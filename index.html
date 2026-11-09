@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thejan Grocery & Hotel | Halloluwa</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <style>
+    :root[data-theme="light"] {
+      --bg: #FAFAF7;
+      --card-bg: #FFFFFF;
+      --text: #191919;
+      --text-muted: #666660;
+      --border: #E8E8E2;
+      --accent: #2D4030;
+      --accent-hover: #1E2D20;
+      --pill: #F0F0EA;
+      --admin-bar: #18181B;
+      --admin-text: #FAFAFA;
+      --edit-outline: #2563EB;
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #121212;
+      --card-bg: #1A1A1A;
+      --text: #EDEDED;
+      --text-muted: #9E9E98;
+      --border: #2C2C2C;
+      --accent: #4A6B4E;
+      --accent-hover: #5C8361;
+      --pill: #242424;
+      --admin-bar: #0A0A0A;
+      --admin-text: #FFFFFF;
+      --edit-outline: #60A5FA;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-bottom: 60px;
+    }
+
+    /* Admin Bar */
+    #admin-toolbar {
+      display: none;
+      background: var(--admin-bar);
+      color: var(--admin-text);
+      padding: 10px 24px;
+      font-size: 0.85rem;
+      position: sticky;
+      top: 0;
+      z-index: 9999;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    }
+
+    .admin-bar-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .admin-actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .admin-btn {
+      background: #2563EB;
+      color: #fff;
+      border: none;
+      padding: 6px 14px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .admin-btn.danger {
+      background: #DC2626;
+    }
+
+    .container {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header */
+    header {
+      padding: 24px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .brand {
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .icon-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: var(--text);
+      color: var(--bg);
+      text-decoration: none;
+    }
+
+    /* Hero */
+    .hero {
+      padding: 64px 0 48px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--pill);
+      border-radius: 99px;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      max-width: 720px;
+      margin: 0 auto 20px;
+    }
+
+    .hero p {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 580px;
+      margin: 0 auto 28px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background-color: var(--accent);
+      color: #FFF;
+      border: none;
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    /* Services */
+    .services {
+      padding: 30px 0 50px;
+    }
+
+    .service-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+
+    .card h3 {
+      font-size: 1.25rem;
+      margin-bottom: 12px;
+      font-weight: 600;
+    }
+
+    .card p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .tag {
+      background: var(--pill);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    /* Gallery */
+    .gallery-section {
+      padding: 30px 0 50px;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .gallery-item {
+      position: relative;
+      border-radius: 12px;
+      overflow: hidden;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      aspect-ratio: 4 / 3;
+    }
+
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .gallery-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 10px 14px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.75));
+      color: #FFFFFF;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .admin-img-uploader {
+      display: none;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Info Bar */
+    .info-bar {
+      margin: 20px 0 60px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 24px;
+    }
+
+    .info-item h4 {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .info-item p {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    /* Admin Edit Mode Visual Hint */
+    body.is-admin [contenteditable="true"] {
+      outline: 2px dashed var(--edit-outline);
+      outline-offset: 4px;
+      border-radius: 4px;
+    }
+    body.is-admin .admin-img-uploader {
+      display: block;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    @media (max-width: 768px) {
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hidden Admin Notification/Action Bar -->
+  <aside id="admin-toolbar" aria-label="Admin controls">
+    <div class="admin-bar-inner">
+      <span>Logged in as Admin: <strong>gethminahalangoda@gmail.com</strong> (Click text directly to edit)</span>
+      <div class="admin-actions">
+        <button class="admin-btn" onclick="saveAllChanges()">Save Changes</button>
+        <button class="admin-btn" onclick="resetToDefault()">Reset Defaults</button>
+        <button class="admin-btn danger" onclick="logoutAdmin()">Sign Out</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <a href="#" class="brand" data-edit-id="brand-name">Thejan Grocery & Hotel</a>
+      
+      <div class="header-controls">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" class="icon-btn" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
+          <svg id="moon-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+          <svg id="sun-icon" style="display:none;" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+        </button>
+
+        <!-- Google Sign-In Container -->
+        <div id="g_id_signin_wrapper"></div>
+
+        <a id="header-call-btn" href="tel:0787811237" class="nav-cta">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+          <span data-edit-id="call-btn-text">Call Store</span>
+        </a>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="badge">
+        <span style="color:#EAB308;">★ 5.0</span> <span data-edit-id="hero-badge">Highly Rated in Halloluwa</span>
+      </div>
+      <h1 data-edit-id="hero-title">Everyday essentials & fresh Sri Lankan flavors.</h1>
+      <p data-edit-id="hero-desc">Your friendly neighborhood spot in Halloluwa for daily household groceries, fresh provisions, warm tea, and authentic local meals.</p>
+      
+      <div class="hero-actions">
+        <a href="https://share.google/9Mmi2MBJBg57TEjPd" target="_blank" rel="noopener" class="btn btn-primary" data-edit-id="hero-map-btn">Find on Google Maps</a>
+        <a id="hero-phone-link" href="tel:0787811237" class="btn btn-secondary" data-edit-id="contact-phone">078 781 1237</a>
+      </div>
+    </section>
+
+    <!-- Services -->
+    <section class="services">
+      <div class="service-grid">
+        <div class="card">
+          <h3 data-edit-id="service1-title">The Grocery Store</h3>
+          <p data-edit-id="service1-desc">Carefully stocked daily essentials, dry goods, fresh produce, spices, dairy, and household provisions for the Halloluwa community.</p>
+          <div class="tag-list">
+            <span class="tag">Fresh Produce</span>
+            <span class="tag">Spices & Rice</span>
+            <span class="tag">Household Goods</span>
+            <span class="tag">Cold Drinks</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3 data-edit-id="service2-title">The Local Eatery ("Hotel")</h3>
+          <p data-edit-id="service2-desc">Quick breakfast, afternoon Ceylon tea, traditional short eats, and freshly cooked local meals prepared with home-style care.</p>
+          <div class="tag-list">
+            <span class="tag">Ceylon Tea</span>
+            <span class="tag">Fresh Short Eats</span>
+            <span class="tag">Daily Rice & Curry</span>
+            <span class="tag">Snacks & Bakery</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Gallery with Admin Image Replacement -->
+    <section class="gallery-section">
+      <h2 class="section-title" data-edit-id="gallery-title">In & Around The Store</h2>
+      <div class="gallery-grid">
+        <!-- Gallery Item 1 -->
+        <div class="gallery-item">
+          <img id="store-img-1" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80" alt="Groceries">
+          <div class="gallery-caption" data-edit-id="caption-1">Fresh Provisions & Groceries</div>
+          <button class="admin-img-uploader" onclick="replaceImage('store-img-1')">Change Image</button>
+        </div>
+        <!-- Gallery Item 2 -->
+        <div class="gallery-item">
+          <img id="store-img-2" src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=800&q=80" alt="Tea and Snacks">
+          <div class="gallery-caption" data-edit-id="caption-2">Hot Ceylon Tea & Short Eats</div>
+          <button class="admin-img-uploader" onclick="replaceImage('store-img-2')">Change Image</button>
+        </div>
+        <!-- Gallery Item 3 -->
+        <div class="gallery-item">
+          <img id="store-img-3" src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=800&q=80" alt="Household Items">
+          <div class="gallery-caption" data-edit-id="caption-3">Everyday Essentials</div>
+          <button class="admin-img-uploader" onclick="replaceImage('store-img-3')">Change Image</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Info Strip -->
+    <div class="info-bar">
+      <div class="info-item">
+        <h4>Location</h4>
+        <p data-edit-id="contact-location">122 Pallegama,<br>Barigama-Halloluwa Rd, Halloluwa</p>
+      </div>
+      <div class="info-item">
+        <h4>Opening Hours</h4>
+        <p data-edit-id="contact-hours">Monday – Sunday<br>8:00 AM – 9:00 PM</p>
+      </div>
+      <div class="info-item">
+        <h4>Contact</h4>
+        <p><span data-edit-id="contact-phone-val">078 781 1237</span></p>
+      </div>
+    </div>
+
+    <!-- Hidden file input for uploads -->
+    <input type="file" id="admin-file-picker" accept="image/*" style="display:none;">
+
+    <!-- Footer -->
+    <footer>
+      <p data-edit-id="footer-copy">© Thejan Grocery & Hotel. All rights reserved.</p>
+    </footer>
+  </div>
+
+  <script>
+    // --- 1. Authorized Admin Email ---
+    const AUTHORIZED_EMAIL = "gethminahalangoda@gmail.com";
+
+    // --- 2. Dark / Light Theme Toggle ---
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const sunIcon = document.getElementById('sun-icon');
+    const moonIcon = document.getElementById('moon-icon');
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('thejan_theme', theme);
+      if (theme === 'dark') {
+        sunIcon.style.display = 'block';
+        moonIcon.style.display = 'none';
+      } else {
+        sunIcon.style.display = 'none';
+        moonIcon.style.display = 'block';
+      }
+    }
+
+    const savedTheme = localStorage.getItem('thejan_theme') || 
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    applyTheme(savedTheme);
+
+    themeToggleBtn.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme');
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    });
+
+    // --- 3. Google Sign-In & Authentication ---
+    function parseJwt(token) {
+      try {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        return JSON.parse(jsonPayload);
+      } catch(e) {
+        return null;
+      }
+    }
+
+    function handleCredentialResponse(response) {
+      const user = parseJwt(response.credential);
+      if (user && user.email) {
+        if (user.email.toLowerCase() === AUTHORIZED_EMAIL.toLowerCase()) {
+          sessionStorage.setItem('admin_token', response.credential);
+          sessionStorage.setItem('admin_email', user.email);
+          enableAdminMode();
+          alert("Welcome back, Gethmina! Edit mode enabled. Click text directly to update contacts, hours, or titles.");
+        } else {
+          alert(`Signed in as ${user.email}. Only ${AUTHORIZED_EMAIL} has administrative privileges.`);
+        }
+      }
+    }
+
+    function initGoogleAuth() {
+      if (window.google) {
+        google.accounts.id.initialize({
+          // Replace with your Google Cloud Console Web Client ID:
+          client_id: "526064955332-mbcvsaej1p4eaapt23tlbkoudtmt2s7u.apps.googleusercontent.com",
+          callback: handleCredentialResponse
+        });
+        google.accounts.id.renderButton(
+          document.getElementById("g_id_signin_wrapper"),
+          { theme: "outline", size: "medium", shape: "pill", text: "signin_with" }
+        );
+      }
+    }
+
+    window.addEventListener('load', () => {
+      initGoogleAuth();
+      if (sessionStorage.getItem('admin_email') === AUTHORIZED_EMAIL) {
+        enableAdminMode();
+      }
+      loadSavedContent();
+    });
+
+    // --- 4. Admin Mode Features ---
+    function enableAdminMode() {
+      document.body.classList.add('is-admin');
+      document.getElementById('admin-toolbar').style.display = 'block';
+      document.getElementById('g_id_signin_wrapper').style.display = 'none';
+
+      // Turn on editable flags for all data-edit-id nodes
+      document.querySelectorAll('[data-edit-id]').forEach(el => {
+        el.setAttribute('contenteditable', 'true');
+      });
+    }
+
+    function logoutAdmin() {
+      sessionStorage.clear();
+      document.body.classList.remove('is-admin');
+      document.getElementById('admin-toolbar').style.display = 'none';
+      document.getElementById('g_id_signin_wrapper').style.display = 'block';
+      document.querySelectorAll('[data-edit-id]').forEach(el => {
+        el.removeAttribute('contenteditable');
+      });
+      alert('Signed out of admin mode.');
+    }
+
+    // --- 5. Image Replacement (File or URL) ---
+    let targetImageId = null;
+    const filePicker = document.getElementById('admin-file-picker');
+
+    function replaceImage(imgElementId) {
+      targetImageId = imgElementId;
+      const choice = confirm("Press [OK] to upload an image from your device, or [Cancel] to paste an image URL.");
+      if (choice) {
+        filePicker.click();
+      } else {
+        const url = prompt("Paste the image URL (e.g. from Google Maps or hosting site):");
+        if (url) {
+          const img = document.getElementById(targetImageId);
+          if (img) {
+            img.src = url;
+            saveImageToStorage(targetImageId, url);
+          }
+        }
+      }
+    }
+
+    filePicker.addEventListener('change', function() {
+      if (this.files && this.files[0] && targetImageId) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const dataUrl = e.target.result;
+          document.getElementById(targetImageId).src = dataUrl;
+          saveImageToStorage(targetImageId, dataUrl);
+        };
+        reader.readAsDataURL(this.files[0]);
+      }
+    });
+
+    function saveImageToStorage(id, src) {
+      let savedImages = JSON.parse(localStorage.getItem('thejan_images') || '{}');
+      savedImages[id] = src;
+      localStorage.setItem('thejan_images', JSON.stringify(savedImages));
+    }
+
+    // --- 6. Content Persistence (localStorage) ---
+    function saveAllChanges() {
+      const content = {};
+      document.querySelectorAll('[data-edit-id]').forEach(el => {
+        const key = el.getAttribute('data-edit-id');
+        content[key] = el.innerHTML;
+      });
+      localStorage.setItem('thejan_content', JSON.stringify(content));
+
+      // Also sync tel: link if contact number changed
+      const phoneText = document.querySelector('[data-edit-id="contact-phone-val"]');
+      if (phoneText) {
+        const clean = phoneText.innerText.replace(/[^0-9+]/g, '');
+        const callBtn = document.getElementById('header-call-btn');
+        const heroPhone = document.getElementById('hero-phone-link');
+        if (callBtn) callBtn.href = "tel:" + clean;
+        if (heroPhone) heroPhone.href = "tel:" + clean;
+      }
+
+      alert("All content and contact details have been saved successfully!");
+    }
+
+    function loadSavedContent() {
+      // Load Texts
+      const saved = localStorage.getItem('thejan_content');
+      if (saved) {
+        try {
+          const content = JSON.parse(saved);
+          Object.keys(content).forEach(key => {
+            const el = document.querySelector(`[data-edit-id="${key}"]`);
+            if (el) el.innerHTML = content[key];
+          });
+        } catch(e) { console.error(e); }
+      }
+
+      // Load Images
+      const savedImgs = localStorage.getItem('thejan_images');
+      if (savedImgs) {
+        try {
+          const imgs = JSON.parse(savedImgs);
+          Object.keys(imgs).forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.src = imgs[id];
+          });
+        } catch(e) { console.error(e); }
+      }
+    }
+
+    function resetToDefault() {
+      if (confirm("Reset all custom text and images to default?")) {
+        localStorage.removeItem('thejan_content');
+        localStorage.removeItem('thejan_images');
+        window.location.reload();
+      }
+    }
+  </script>
+</body>
+</html>
