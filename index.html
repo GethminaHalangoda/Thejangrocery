@@ -4,687 +4,1267 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Thejan Grocery & Hotel | Halloluwa</title>
+  
+  <!-- Dynamic Favicon using logo-light.png and logo-dark.png -->
+  <link rel="icon" id="dynamic-favicon" type="image/png" href="logo-light.png" />
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  
-  <!-- Google Identity Services -->
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
 
   <style>
+    /* ==========================================================================
+       Liquid Glass Theme Variables
+       ========================================================================== */
     :root[data-theme="light"] {
-      --bg: #FAFAF7;
-      --card-bg: #FFFFFF;
-      --text: #191919;
-      --text-muted: #666660;
-      --border: #E8E8E2;
-      --accent: #2D4030;
-      --accent-hover: #1E2D20;
-      --pill: #F0F0EA;
-      --admin-bar: #18181B;
-      --admin-text: #FAFAFA;
-      --edit-outline: #2563EB;
+      --bg: #F7F5F0;
+      --text: #17181A;
+      --text-muted: #5C6068;
+      --glass-bg: rgba(255, 255, 255, 0.65);
+      --glass-card: rgba(255, 255, 255, 0.72);
+      --glass-border: rgba(255, 255, 255, 0.85);
+      --glass-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.07), 0 0 0 1px rgba(255, 255, 255, 0.6) inset;
+      --pill-bg: rgba(230, 228, 222, 0.7);
+      --accent-gold: #C69234;
+      --accent-deep: #1F3025;
+      --blob-1: rgba(234, 179, 8, 0.22);
+      --blob-2: rgba(45, 64, 48, 0.15);
+      --blob-3: rgba(235, 130, 60, 0.18);
+      --nav-bg: rgba(255, 255, 255, 0.7);
     }
 
     :root[data-theme="dark"] {
-      --bg: #121212;
-      --card-bg: #1A1A1A;
-      --text: #EDEDED;
-      --text-muted: #9E9E98;
-      --border: #2C2C2C;
-      --accent: #4A6B4E;
-      --accent-hover: #5C8361;
-      --pill: #242424;
-      --admin-bar: #0A0A0A;
-      --admin-text: #FFFFFF;
-      --edit-outline: #60A5FA;
+      --bg: #0D0E10;
+      --text: #F3F4F6;
+      --text-muted: #9CA3AF;
+      --glass-bg: rgba(24, 26, 30, 0.6);
+      --glass-card: rgba(26, 29, 35, 0.68);
+      --glass-border: rgba(255, 255, 255, 0.12);
+      --glass-shadow: 0 24px 50px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+      --pill-bg: rgba(40, 44, 52, 0.6);
+      --accent-gold: #E5A93C;
+      --accent-deep: #3B543F;
+      --blob-1: rgba(229, 169, 60, 0.16);
+      --blob-2: rgba(30, 58, 138, 0.18);
+      --blob-3: rgba(16, 185, 129, 0.14);
+      --nav-bg: rgba(18, 20, 24, 0.75);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+      transition: background-color 0.4s ease, border-color 0.4s ease, color 0.2s ease;
     }
 
+    /* Content Protection: Disable Text Selection & Image Dragging */
     body {
-      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       background-color: var(--bg);
       color: var(--text);
-      line-height: 1.6;
-      -webkit-font-smoothing: antialiased;
-      padding-bottom: 60px;
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
 
-    /* Admin Bar */
-    #admin-toolbar {
-      display: none;
-      background: var(--admin-bar);
-      color: var(--admin-text);
-      padding: 10px 24px;
-      font-size: 0.85rem;
-      position: sticky;
-      top: 0;
-      z-index: 9999;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    img {
+      -webkit-user-drag: none;
+      user-drag: none;
+      pointer-events: auto;
     }
 
-    .admin-bar-inner {
-      max-width: 1080px;
-      margin: 0 auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
+    /* Allow selection only inside editable fields when Admin is logged in */
+    body.admin-mode [contenteditable="true"],
+    .admin-modal-card input,
+    #admin-bar {
+      -webkit-user-select: text !important;
+      -moz-user-select: text !important;
+      -ms-user-select: text !important;
+      user-select: text !important;
     }
 
-    .admin-actions {
-      display: flex;
-      gap: 8px;
-      align-items: center;
+    html {
+      scroll-behavior: smooth;
     }
 
-    .admin-btn {
-      background: #2563EB;
-      color: #fff;
-      border: none;
-      padding: 6px 14px;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
+    /* ==========================================================================
+       Liquid Morphing Background Canvas
+       ========================================================================== */
+    .liquid-mesh {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
     }
 
-    .admin-btn.danger {
-      background: #DC2626;
+    .liquid-blob {
+      position: absolute;
+      filter: blur(80px);
+      opacity: 0.85;
+      animation: floatMorph 22s infinite alternate ease-in-out;
+      will-change: transform, border-radius;
+    }
+
+    .blob-1 {
+      top: -10%;
+      left: 10%;
+      width: 550px;
+      height: 550px;
+      background: var(--blob-1);
+      border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+      animation-duration: 18s;
+    }
+
+    .blob-2 {
+      top: 40%;
+      right: -5%;
+      width: 600px;
+      height: 600px;
+      background: var(--blob-2);
+      border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+      animation-duration: 25s;
+      animation-delay: -6s;
+    }
+
+    .blob-3 {
+      bottom: -15%;
+      left: 20%;
+      width: 500px;
+      height: 500px;
+      background: var(--blob-3);
+      border-radius: 50% 50% 30% 70% / 50% 60% 40% 60%;
+      animation-duration: 20s;
+      animation-delay: -10s;
+    }
+
+    @keyframes floatMorph {
+      0% {
+        transform: translate(0, 0) rotate(0deg) scale(1);
+        border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+      }
+      50% {
+        transform: translate(60px, 80px) rotate(180deg) scale(1.12);
+        border-radius: 60% 40% 30% 70% / 50% 30% 70% 50%;
+      }
+      100% {
+        transform: translate(-50px, 40px) rotate(360deg) scale(0.95);
+        border-radius: 30% 70% 50% 50% / 30% 40% 60% 70%;
+      }
+    }
+
+    /* ==========================================================================
+       Liquid Glass Base Utility
+       ========================================================================== */
+    .liquid-glass {
+      background: var(--glass-card);
+      backdrop-filter: blur(24px) saturate(190%);
+      -webkit-backdrop-filter: blur(24px) saturate(190%);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      position: relative;
     }
 
     .container {
-      max-width: 1080px;
+      max-width: 1140px;
       margin: 0 auto;
       padding: 0 24px;
+      position: relative;
+      z-index: 1;
     }
 
-    /* Header */
-    header {
-      padding: 24px 0;
+    /* ==========================================================================
+       Floating Liquid Navbar
+       ========================================================================== */
+    .nav-wrapper {
+      position: sticky;
+      top: 18px;
+      z-index: 100;
+      margin-top: 18px;
+    }
+
+    .nav-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-bottom: 1px solid var(--border);
-      flex-wrap: wrap;
-      gap: 16px;
+      padding: 10px 22px;
+      border-radius: 20px;
+      background: var(--nav-bg);
+      backdrop-filter: blur(28px) saturate(200%);
+      -webkit-backdrop-filter: blur(28px) saturate(200%);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
     }
 
-    .brand {
-      font-weight: 700;
-      font-size: 1.15rem;
-      letter-spacing: -0.02em;
+    .brand-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       text-decoration: none;
       color: var(--text);
     }
 
-    .header-controls {
+    .brand-logo-img {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border: 1px solid var(--glass-border);
+    }
+
+    .brand-title {
+      font-weight: 700;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+
+    .brand-sub {
+      display: block;
+      font-size: 0.72rem;
+      font-weight: 500;
+      color: var(--accent-gold);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .nav-links {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 22px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .icon-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      color: var(--text);
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      cursor: pointer;
+      border: 1px solid var(--glass-border);
+      background: var(--pill-bg);
+      color: var(--text);
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
     }
 
-    .nav-cta {
+    .icon-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .cta-btn {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.88rem;
-      font-weight: 500;
-      padding: 8px 16px;
-      border-radius: 999px;
+      padding: 9px 18px;
+      border-radius: 99px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      text-decoration: none;
       background: var(--text);
       color: var(--bg);
-      text-decoration: none;
+      transition: transform 0.2s ease, opacity 0.2s ease;
     }
 
-    /* Hero */
+    .cta-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    /* ==========================================================================
+       Hero Landing Section
+       ========================================================================== */
     .hero {
-      padding: 64px 0 48px;
+      padding: 90px 0 60px;
       text-align: center;
     }
 
-    .badge {
+    .status-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 14px;
-      background: var(--pill);
+      gap: 8px;
+      padding: 6px 16px;
       border-radius: 99px;
+      background: var(--pill-bg);
+      border: 1px solid var(--glass-border);
       font-size: 0.82rem;
-      font-weight: 500;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 24px;
+      backdrop-filter: blur(16px);
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10B981;
+      box-shadow: 0 0 10px #10B981;
+      animation: pulseDot 2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.85); }
+    }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 6vw, 4.2rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.1;
+      max-width: 820px;
+      margin: 0 auto 24px;
+    }
+
+    .hero-title .serif-italic {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-weight: 600;
+      color: var(--accent-gold);
+    }
+
+    .hero-desc {
+      font-size: 1.15rem;
       color: var(--text-muted);
-      margin-bottom: 20px;
+      max-width: 620px;
+      margin: 0 auto 36px;
+      line-height: 1.65;
     }
 
-    .hero h1 {
-      font-size: clamp(2rem, 5vw, 3.2rem);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      line-height: 1.15;
-      max-width: 720px;
-      margin: 0 auto 20px;
-    }
-
-    .hero p {
-      font-size: 1.05rem;
-      color: var(--text-muted);
-      max-width: 580px;
-      margin: 0 auto 28px;
-    }
-
-    .hero-actions {
+    .hero-buttons {
       display: flex;
-      gap: 12px;
       justify-content: center;
+      gap: 16px;
       flex-wrap: wrap;
+      margin-bottom: 60px;
     }
 
-    .btn {
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-size: 0.92rem;
+    .btn-liquid {
+      padding: 14px 28px;
+      border-radius: 14px;
+      font-size: 0.96rem;
       font-weight: 600;
       text-decoration: none;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      overflow: hidden;
     }
 
-    .btn-primary {
-      background-color: var(--accent);
-      color: #FFF;
+    .btn-gold {
+      background: linear-gradient(135deg, #D99B35, #B87C20);
+      color: #FFFFFF;
       border: none;
+      box-shadow: 0 10px 25px -8px rgba(217, 155, 53, 0.5);
     }
 
-    .btn-secondary {
-      background-color: transparent;
+    .btn-gold:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px -8px rgba(217, 155, 53, 0.65);
+    }
+
+    .btn-outline {
+      background: var(--glass-card);
       color: var(--text);
-      border: 1px solid var(--border);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
     }
 
-    /* Services */
-    .services {
-      padding: 30px 0 50px;
+    .btn-outline:hover {
+      background: var(--pill-bg);
+      transform: translateY(-2px);
     }
 
-    .service-grid {
+    .hero-metrics {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 18px;
+      max-width: 860px;
+      margin: 0 auto;
     }
 
-    .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px;
+    .metric-card {
+      border-radius: 18px;
+      padding: 20px 24px;
+      text-align: center;
     }
 
-    .card h3 {
-      font-size: 1.25rem;
-      margin-bottom: 12px;
-      font-weight: 600;
+    .metric-val {
+      font-size: 1.8rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
     }
 
-    .card p {
+    .metric-label {
+      font-size: 0.82rem;
       color: var(--text-muted);
-      font-size: 0.95rem;
-      margin-bottom: 20px;
+      margin-top: 4px;
+      font-weight: 500;
     }
 
-    .tag-list {
+    /* ==========================================================================
+       Department Showcase (Grocery & Eatery)
+       ========================================================================== */
+    .section-header {
+      text-align: center;
+      margin: 80px 0 40px;
+    }
+
+    .section-eyebrow {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent-gold);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .section-heading {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .dept-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+    }
+
+    .dept-card {
+      border-radius: 24px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+    }
+
+    .dept-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .dept-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      background: var(--pill-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      border: 1px solid var(--glass-border);
+    }
+
+    .dept-card h3 {
+      font-size: 1.55rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 12px;
+    }
+
+    .dept-card p {
+      color: var(--text-muted);
+      font-size: 0.98rem;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .pill-tags {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
     }
 
-    .tag {
-      background: var(--pill);
-      padding: 4px 10px;
-      border-radius: 6px;
+    .pill-tag {
+      padding: 6px 14px;
+      background: var(--pill-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 99px;
       font-size: 0.8rem;
-      font-weight: 500;
-      color: var(--text-muted);
-    }
-
-    /* Gallery */
-    .gallery-section {
-      padding: 30px 0 50px;
-    }
-
-    .section-title {
-      font-size: 1.5rem;
       font-weight: 600;
-      letter-spacing: -0.02em;
-      margin-bottom: 24px;
-      text-align: center;
+      color: var(--text);
     }
 
+    /* ==========================================================================
+       Gallery & Admin Image Controls
+       ========================================================================== */
     .gallery-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
+      gap: 20px;
+      margin-top: 30px;
     }
 
-    .gallery-item {
-      position: relative;
-      border-radius: 12px;
+    .gallery-card {
+      border-radius: 20px;
       overflow: hidden;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
       aspect-ratio: 4 / 3;
+      position: relative;
+      background: var(--pill-bg);
+      border: 1px solid var(--glass-border);
     }
 
-    .gallery-item img {
+    .gallery-card img {
       width: 100%;
       height: 100%;
       object-fit: cover;
       display: block;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .gallery-caption {
+    .gallery-card:hover img {
+      transform: scale(1.05);
+    }
+
+    .gallery-overlay {
       position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: 10px 14px;
-      background: linear-gradient(transparent, rgba(0,0,0,0.75));
+      inset: auto 0 0 0;
+      padding: 24px 18px 14px;
+      background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.85) 100%);
       color: #FFFFFF;
-      font-size: 0.8rem;
-      font-weight: 500;
+      font-size: 0.88rem;
+      font-weight: 600;
+      pointer-events: none;
     }
 
-    .admin-img-uploader {
+    .admin-upload-trigger {
       display: none;
       position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.7);
+      top: 14px;
+      right: 14px;
+      background: rgba(0, 0, 0, 0.75);
       color: #fff;
-      padding: 6px 12px;
-      border-radius: 6px;
+      padding: 8px 14px;
+      border-radius: 10px;
       font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid rgba(255, 255, 255, 0.3);
       cursor: pointer;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(10px);
+      z-index: 5;
     }
 
-    /* Info Bar */
-    .info-bar {
-      margin: 20px 0 60px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px;
+    /* ==========================================================================
+       Location & Working Hours Hub
+       ========================================================================== */
+    .hub-card {
+      margin: 80px 0 50px;
+      border-radius: 28px;
+      padding: 44px;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 24px;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 40px;
+      align-items: center;
     }
 
-    .info-item h4 {
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+    .hub-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+
+    .hub-desc {
       color: var(--text-muted);
-      margin-bottom: 6px;
+      font-size: 0.98rem;
+      margin-bottom: 24px;
     }
 
-    .info-item p {
-      font-size: 1rem;
-      font-weight: 500;
+    .hub-meta {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
     }
 
-    /* Admin Edit Mode Visual Hint */
-    body.is-admin [contenteditable="true"] {
-      outline: 2px dashed var(--edit-outline);
+    .hub-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .hub-icon-circle {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--pill-bg);
+      border: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .hub-info h5 {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .hub-info p {
+      font-size: 0.98rem;
+      font-weight: 600;
+    }
+
+    .hub-action-box {
+      border-radius: 20px;
+      padding: 30px;
+      background: var(--pill-bg);
+      border: 1px solid var(--glass-border);
+      text-align: center;
+    }
+
+    /* ==========================================================================
+       Admin Control Center & Modal
+       ========================================================================== */
+    #admin-bar {
+      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #0F172A;
+      color: #F8FAFC;
+      padding: 12px 24px;
+      font-size: 0.85rem;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .admin-bar-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .admin-bar-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .btn-admin {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-admin.save {
+      background: #10B981;
+      color: #fff;
+    }
+
+    .btn-admin.logout {
+      background: #EF4444;
+      color: #fff;
+    }
+
+    /* Editable State */
+    body.admin-mode [contenteditable="true"] {
+      outline: 2px dashed #3B82F6 !important;
       outline-offset: 4px;
-      border-radius: 4px;
+      border-radius: 6px;
+      background: rgba(59, 130, 246, 0.04);
     }
-    body.is-admin .admin-img-uploader {
+
+    body.admin-mode .admin-upload-trigger {
       display: block;
     }
 
+    /* Glass Admin Modal */
+    .admin-modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(14px);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .admin-modal-card {
+      width: 100%;
+      max-width: 440px;
+      border-radius: 24px;
+      padding: 36px;
+    }
+
+    .admin-modal-card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .admin-modal-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 22px;
+    }
+
+    .input-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+      color: var(--text);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+      background: var(--pill-bg);
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+    }
+
+    /* Footer */
     footer {
-      border-top: 1px solid var(--border);
-      padding: 32px 0;
+      border-top: 1px solid var(--glass-border);
+      padding: 36px 0;
       text-align: center;
-      font-size: 0.85rem;
+      font-size: 0.86rem;
       color: var(--text-muted);
     }
 
-    @media (max-width: 768px) {
-      .gallery-grid {
-        grid-template-columns: 1fr;
-      }
-      .hero h1 {
-        font-size: 2rem;
-      }
+    @media (max-width: 860px) {
+      .nav-links { display: none; }
+      .dept-grid, .hub-card { grid-template-columns: 1fr; }
+      .gallery-grid { grid-template-columns: 1fr; }
+      .hero { padding: 60px 0 40px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Hidden Admin Notification/Action Bar -->
-  <aside id="admin-toolbar" aria-label="Admin controls">
+  <!-- Animated Morphing Liquid Mesh -->
+  <div class="liquid-mesh" aria-hidden="true">
+    <div class="liquid-blob blob-1"></div>
+    <div class="liquid-blob blob-2"></div>
+    <div class="liquid-blob blob-3"></div>
+  </div>
+
+  <!-- Admin Bar -->
+  <aside id="admin-bar" aria-label="Admin Bar">
     <div class="admin-bar-inner">
-      <span>Logged in as Admin: <strong>gethminahalangoda@gmail.com</strong> (Click text directly to edit)</span>
-      <div class="admin-actions">
-        <button class="admin-btn" onclick="saveAllChanges()">Save Changes</button>
-        <button class="admin-btn" onclick="resetToDefault()">Reset Defaults</button>
-        <button class="admin-btn danger" onclick="logoutAdmin()">Sign Out</button>
+      <span>Logged in: <strong>gethminahalangoda@gmail.com</strong> (Click any text on the page to edit)</span>
+      <div class="admin-bar-actions">
+        <button class="btn-admin save" onclick="saveEdits()">Save Content</button>
+        <button class="btn-admin" onclick="resetDefaultContent()">Reset Defaults</button>
+        <button class="btn-admin logout" onclick="exitAdmin()">Sign Out</button>
       </div>
     </div>
   </aside>
 
   <div class="container">
-    <!-- Header -->
-    <header>
-      <a href="#" class="brand" data-edit-id="brand-name">Thejan Grocery & Hotel</a>
-      
-      <div class="header-controls">
-        <!-- Theme Toggle -->
-        <button id="theme-toggle" class="icon-btn" aria-label="Toggle Dark/Light Mode" title="Toggle Theme">
-          <svg id="moon-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
-          <svg id="sun-icon" style="display:none;" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
-        </button>
-
-        <!-- Google Sign-In Container -->
-        <div id="g_id_signin_wrapper"></div>
-
-        <a id="header-call-btn" href="tel:0787811237" class="nav-cta">
-          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-          <span data-edit-id="call-btn-text">Call Store</span>
+    <!-- Floating Liquid Navbar -->
+    <div class="nav-wrapper">
+      <nav class="nav-bar">
+        <a href="#" class="brand-link">
+          <!-- Dynamic Logo (Uses logo-light.png and logo-dark.png) -->
+          <img id="nav-logo" class="brand-logo-img" src="logo-light.png" alt="Thejan Grocery & Hotel Emblem">
+          <div>
+            <div class="brand-title" data-edit-key="brand-name">Thejan Grocery & Hotel</div>
+            <span class="brand-sub">Halloluwa, Sri Lanka</span>
+          </div>
         </a>
+
+        <ul class="nav-links">
+          <li><a href="#about">About</a></li>
+          <li><a href="#departments">Departments</a></li>
+          <li><a href="#gallery">Store Gallery</a></li>
+          <li><a href="#contact">Contact & Hours</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <!-- Dark / Light Mode Toggle -->
+          <button id="theme-toggle" class="icon-btn" aria-label="Toggle Theme" title="Toggle Theme">
+            <svg id="moon-icon" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+            <svg id="sun-icon" style="display:none;" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          </button>
+
+          <a id="header-phone-btn" href="tel:0787811237" class="cta-btn">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <span data-edit-key="cta-call-text">Call Store</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+
+    <!-- Hero Landing -->
+    <header class="hero" id="about">
+      <div class="status-pill">
+        <span class="live-dot" id="live-indicator"></span>
+        <span id="live-status-text">Open Today • 8:00 AM – 9:00 PM</span>
+      </div>
+
+      <h1 class="hero-title" data-edit-key="hero-title">
+        The heartbeat of fresh groceries & <span class="serif-italic">Ceylon flavours</span> in Halloluwa.
+      </h1>
+
+      <p class="hero-desc" data-edit-key="hero-desc">
+        Serving the local community with farm-fresh produce, everyday household provisions, authentic hot tea, and freshly prepared Sri Lankan short eats.
+      </p>
+
+      <div class="hero-buttons">
+        <a href="https://share.google/9Mmi2MBJBg57TEjPd" target="_blank" rel="noopener" class="btn-liquid btn-gold" data-edit-key="btn-map-text">
+          <svg width="17" height="17" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          Get Google Maps Directions
+        </a>
+        <a id="hero-call-link" href="tel:0787811237" class="btn-liquid btn-outline">
+          <span data-edit-key="contact-phone-display">078 781 1237</span>
+        </a>
+      </div>
+
+      <!-- Metrics -->
+      <div class="hero-metrics">
+        <div class="metric-card liquid-glass">
+          <div class="metric-val" data-edit-key="metric1-val">5.0 ★</div>
+          <div class="metric-label" data-edit-key="metric1-label">Google Rating</div>
+        </div>
+        <div class="metric-card liquid-glass">
+          <div class="metric-val" data-edit-key="metric2-val">7 Days</div>
+          <div class="metric-label" data-edit-key="metric2-label">8:00 AM – 9:00 PM</div>
+        </div>
+        <div class="metric-card liquid-glass">
+          <div class="metric-val" data-edit-key="metric3-val">100%</div>
+          <div class="metric-label" data-edit-key="metric3-label">Fresh & Authentic</div>
+        </div>
       </div>
     </header>
 
-    <!-- Hero -->
-    <section class="hero">
-      <div class="badge">
-        <span style="color:#EAB308;">★ 5.0</span> <span data-edit-id="hero-badge">Highly Rated in Halloluwa</span>
+    <!-- Departments -->
+    <section id="departments">
+      <div class="section-header">
+        <span class="section-eyebrow">Our Dual Offerings</span>
+        <h2 class="section-heading" data-edit-key="dept-section-heading">Everything You Need Under One Roof</h2>
       </div>
-      <h1 data-edit-id="hero-title">Everyday essentials & fresh Sri Lankan flavors.</h1>
-      <p data-edit-id="hero-desc">Your friendly neighborhood spot in Halloluwa for daily household groceries, fresh provisions, warm tea, and authentic local meals.</p>
-      
-      <div class="hero-actions">
-        <a href="https://share.google/9Mmi2MBJBg57TEjPd" target="_blank" rel="noopener" class="btn btn-primary" data-edit-id="hero-map-btn">Find on Google Maps</a>
-        <a id="hero-phone-link" href="tel:0787811237" class="btn btn-secondary" data-edit-id="contact-phone">078 781 1237</a>
-      </div>
-    </section>
 
-    <!-- Services -->
-    <section class="services">
-      <div class="service-grid">
-        <div class="card">
-          <h3 data-edit-id="service1-title">The Grocery Store</h3>
-          <p data-edit-id="service1-desc">Carefully stocked daily essentials, dry goods, fresh produce, spices, dairy, and household provisions for the Halloluwa community.</p>
-          <div class="tag-list">
-            <span class="tag">Fresh Produce</span>
-            <span class="tag">Spices & Rice</span>
-            <span class="tag">Household Goods</span>
-            <span class="tag">Cold Drinks</span>
+      <div class="dept-grid">
+        <!-- Grocery -->
+        <div class="dept-card liquid-glass">
+          <div>
+            <div class="dept-icon">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+            </div>
+            <h3 data-edit-key="dept1-title">The Local Grocery</h3>
+            <p data-edit-key="dept1-desc">
+              From fresh farm vegetables, aromatic local spices, and quality rice to dairy, toiletries, and cold beverages — we keep your home stocked with the essentials.
+            </p>
+          </div>
+          <div class="pill-tags">
+            <span class="pill-tag">Fresh Vegetables</span>
+            <span class="pill-tag">Spices & Lentils</span>
+            <span class="pill-tag">Dairy & Beverages</span>
+            <span class="pill-tag">Household Goods</span>
           </div>
         </div>
 
-        <div class="card">
-          <h3 data-edit-id="service2-title">The Local Eatery ("Hotel")</h3>
-          <p data-edit-id="service2-desc">Quick breakfast, afternoon Ceylon tea, traditional short eats, and freshly cooked local meals prepared with home-style care.</p>
-          <div class="tag-list">
-            <span class="tag">Ceylon Tea</span>
-            <span class="tag">Fresh Short Eats</span>
-            <span class="tag">Daily Rice & Curry</span>
-            <span class="tag">Snacks & Bakery</span>
+        <!-- Hotel / Eatery -->
+        <div class="dept-card liquid-glass">
+          <div>
+            <div class="dept-icon">
+              <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>
+            </div>
+            <h3 data-edit-key="dept2-title">The Hotel & Tea Room</h3>
+            <p data-edit-key="dept2-desc">
+              A classic Sri Lankan "hotel" offering piping hot Ceylon milk tea, fresh crispy rolls, samosas, breakfast rotis, and hearty midday rice & curry specials.
+            </p>
+          </div>
+          <div class="pill-tags">
+            <span class="pill-tag">Fresh Ceylon Tea</span>
+            <span class="pill-tag">Sri Lankan Short Eats</span>
+            <span class="pill-tag">Daily Rice & Curry</span>
+            <span class="pill-tag">Bakery & Roti</span>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- Gallery with Admin Image Replacement -->
-    <section class="gallery-section">
-      <h2 class="section-title" data-edit-id="gallery-title">In & Around The Store</h2>
+    <!-- Gallery -->
+    <section id="gallery" style="margin-top: 80px;">
+      <div class="section-header">
+        <span class="section-eyebrow">Visual Tour</span>
+        <h2 class="section-heading" data-edit-key="gallery-heading">In & Around Thejan Grocery & Hotel</h2>
+      </div>
+
       <div class="gallery-grid">
-        <!-- Gallery Item 1 -->
-        <div class="gallery-item">
-          <img id="store-img-1" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80" alt="Groceries">
-          <div class="gallery-caption" data-edit-id="caption-1">Fresh Provisions & Groceries</div>
-          <button class="admin-img-uploader" onclick="replaceImage('store-img-1')">Change Image</button>
+        <!-- 1 -->
+        <div class="gallery-card liquid-glass">
+          <img id="img-store-1" src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80" alt="Fresh Groceries">
+          <div class="gallery-overlay" data-edit-key="caption-1">Fresh Farm Produce & Groceries</div>
+          <button class="admin-upload-trigger" onclick="replaceImageSlot('img-store-1')">Change Image</button>
         </div>
-        <!-- Gallery Item 2 -->
-        <div class="gallery-item">
-          <img id="store-img-2" src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=800&q=80" alt="Tea and Snacks">
-          <div class="gallery-caption" data-edit-id="caption-2">Hot Ceylon Tea & Short Eats</div>
-          <button class="admin-img-uploader" onclick="replaceImage('store-img-2')">Change Image</button>
+
+        <!-- 2 -->
+        <div class="gallery-card liquid-glass">
+          <img id="img-store-2" src="https://images.unsplash.com/photo-1576092768241-dec231879fc3?auto=format&fit=crop&w=800&q=80" alt="Tea & Snacks">
+          <div class="gallery-overlay" data-edit-key="caption-2">Ceylon Tea & Fresh Short Eats</div>
+          <button class="admin-upload-trigger" onclick="replaceImageSlot('img-store-2')">Change Image</button>
         </div>
-        <!-- Gallery Item 3 -->
-        <div class="gallery-item">
-          <img id="store-img-3" src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=800&q=80" alt="Household Items">
-          <div class="gallery-caption" data-edit-id="caption-3">Everyday Essentials</div>
-          <button class="admin-img-uploader" onclick="replaceImage('store-img-3')">Change Image</button>
+
+        <!-- 3 -->
+        <div class="gallery-card liquid-glass">
+          <img id="img-store-3" src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?auto=format&fit=crop&w=800&q=80" alt="Essentials">
+          <div class="gallery-overlay" data-edit-key="caption-3">Daily Household Essentials</div>
+          <button class="admin-upload-trigger" onclick="replaceImageSlot('img-store-3')">Change Image</button>
         </div>
       </div>
     </section>
 
-    <!-- Info Strip -->
-    <div class="info-bar">
-      <div class="info-item">
-        <h4>Location</h4>
-        <p data-edit-id="contact-location">122 Pallegama,<br>Barigama-Halloluwa Rd, Halloluwa</p>
-      </div>
-      <div class="info-item">
-        <h4>Opening Hours</h4>
-        <p data-edit-id="contact-hours">Monday – Sunday<br>8:00 AM – 9:00 PM</p>
-      </div>
-      <div class="info-item">
-        <h4>Contact</h4>
-        <p><span data-edit-id="contact-phone-val">078 781 1237</span></p>
-      </div>
-    </div>
+    <!-- Contact & Location Hub -->
+    <section id="contact">
+      <div class="hub-card liquid-glass">
+        <div>
+          <h3 class="hub-title" data-edit-key="hub-title">Visit Us in Halloluwa</h3>
+          <p class="hub-desc" data-edit-key="hub-desc">
+            Conveniently situated along the Barigama-Halloluwa Road. Drop by for your morning groceries or an afternoon tea break.
+          </p>
 
-    <!-- Hidden file input for uploads -->
-    <input type="file" id="admin-file-picker" accept="image/*" style="display:none;">
+          <div class="hub-meta">
+            <div class="hub-row">
+              <div class="hub-icon-circle">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+              </div>
+              <div class="hub-info">
+                <h5>Location</h5>
+                <p data-edit-key="contact-address">122 Pallegama, Barigama-Halloluwa Rd, Halloluwa, Sri Lanka</p>
+              </div>
+            </div>
+
+            <div class="hub-row">
+              <div class="hub-icon-circle">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+              </div>
+              <div class="hub-info">
+                <h5>Operating Hours</h5>
+                <p data-edit-key="contact-hours">Monday – Sunday: 8:00 AM – 9:00 PM</p>
+              </div>
+            </div>
+
+            <div class="hub-row">
+              <div class="hub-icon-circle">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+              </div>
+              <div class="hub-info">
+                <h5>Direct Call</h5>
+                <p><span data-edit-key="contact-phone-number">078 781 1237</span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hub-action-box">
+          <h4 style="font-size: 1.2rem; margin-bottom: 8px;">Directions & Map</h4>
+          <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 20px;">
+            Open your navigation app or Google Maps directly for real-time directions.
+          </p>
+          <a href="https://share.google/9Mmi2MBJBg57TEjPd" target="_blank" rel="noopener" class="btn-liquid btn-gold" style="width: 100%; justify-content: center;">
+            Open Google Maps Pin
+          </a>
+        </div>
+      </div>
+    </section>
 
     <!-- Footer -->
     <footer>
-      <p data-edit-id="footer-copy">© Thejan Grocery & Hotel. All rights reserved.</p>
+      <p>© 2026 <strong data-edit-key="footer-brand">Thejan Grocery & Hotel</strong>. All rights reserved.</p>
     </footer>
   </div>
 
-  <script>
-    // --- 1. Authorized Admin Email ---
-    const AUTHORIZED_EMAIL = "gethminahalangoda@gmail.com";
+  <!-- Admin Verification Modal (Triggered ONLY via Ctrl+Alt+L) -->
+  <div class="admin-modal-overlay" id="admin-modal">
+    <div class="admin-modal-card liquid-glass">
+      <h3>Store Management</h3>
+      <p>Authorized access for <strong>gethminahalangoda@gmail.com</strong></p>
 
-    // --- 2. Dark / Light Theme Toggle ---
+      <form id="admin-login-form" onsubmit="handleAdminLogin(event)">
+        <div class="input-group">
+          <label for="admin-email">Admin Email</label>
+          <input type="email" id="admin-email" class="input-field" placeholder="gethminahalangoda@gmail.com" required />
+        </div>
+        <div class="input-group">
+          <label for="admin-passcode">Password</label>
+          <input type="password" id="admin-passcode" class="input-field" placeholder="Enter password" required />
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 24px;">
+          <button type="submit" class="btn-liquid btn-gold" style="flex: 1; justify-content: center;">Authenticate</button>
+          <button type="button" class="btn-liquid btn-outline" onclick="closeAdminModal()">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Hidden native file input for instant photo uploads -->
+  <input type="file" id="image-file-input" accept="image/*" style="display: none;" />
+
+  <script>
+    // =========================================================================
+    // 1. Protection: Disable Right-Click Globally
+    // =========================================================================
+    document.addEventListener('contextmenu', (e) => {
+      e.preventDefault();
+      return false;
+    });
+
+    // =========================================================================
+    // 2. Secret Keybind: Ctrl + Alt + L to Open Admin Menu
+    // =========================================================================
+    const adminModal = document.getElementById('admin-modal');
+    const adminEmailField = document.getElementById('admin-email');
+    const adminPassField = document.getElementById('admin-passcode');
+
+    window.addEventListener('keydown', (e) => {
+      // Check for Ctrl + Alt + L (or Cmd + Alt + L on Mac)
+      if ((e.ctrlKey || e.metaKey) && e.altKey && (e.key === 'l' || e.key === 'L')) {
+        e.preventDefault();
+        openAdminModal();
+      }
+      // ESC key to close modal
+      if (e.key === 'Escape' && adminModal.style.display === 'flex') {
+        closeAdminModal();
+      }
+    });
+
+    function openAdminModal() {
+      adminModal.style.display = 'flex';
+      adminEmailField.value = "gethminahalangoda@gmail.com";
+      adminPassField.value = "";
+      setTimeout(() => adminPassField.focus(), 100);
+    }
+
+    function closeAdminModal() {
+      adminModal.style.display = 'none';
+    }
+
+    // =========================================================================
+    // 3. Authorized Admin Credentials
+    // =========================================================================
+    const AUTHORIZED_ADMIN = "gethminahalangoda@gmail.com";
+    const MASTER_PASSWORD = "Gethmina@123";
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const email = adminEmailField.value.trim().toLowerCase();
+      const pass = adminPassField.value;
+
+      if (email === AUTHORIZED_ADMIN.toLowerCase() && pass === MASTER_PASSWORD) {
+        sessionStorage.setItem('thejan_admin_logged', 'true');
+        closeAdminModal();
+        enableAdminMode();
+        alert("Access Granted! Click any text directly to edit, or use 'Change Image' on gallery photos.");
+      } else {
+        alert("Access Denied: Incorrect email or password.");
+      }
+    }
+
+    // =========================================================================
+    // 4. Theme Switching & Dynamic Favicon + Logo Swapping
+    // =========================================================================
     const themeToggleBtn = document.getElementById('theme-toggle');
     const sunIcon = document.getElementById('sun-icon');
     const moonIcon = document.getElementById('moon-icon');
+    const navLogo = document.getElementById('nav-logo');
+    const dynamicFavicon = document.getElementById('dynamic-favicon');
 
-    function applyTheme(theme) {
+    function setTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
-      localStorage.setItem('thejan_theme', theme);
+      localStorage.setItem('thejan_theme_pref', theme);
+
       if (theme === 'dark') {
         sunIcon.style.display = 'block';
         moonIcon.style.display = 'none';
+        navLogo.src = 'logo-dark.png';
+        if (dynamicFavicon) dynamicFavicon.href = 'logo-dark.png';
       } else {
         sunIcon.style.display = 'none';
         moonIcon.style.display = 'block';
+        navLogo.src = 'logo-light.png';
+        if (dynamicFavicon) dynamicFavicon.href = 'logo-light.png';
       }
     }
 
-    const savedTheme = localStorage.getItem('thejan_theme') || 
+    const savedTheme = localStorage.getItem('thejan_theme_pref') ||
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    applyTheme(savedTheme);
+    setTheme(savedTheme);
 
     themeToggleBtn.addEventListener('click', () => {
-      const current = document.documentElement.getAttribute('data-theme');
-      applyTheme(current === 'dark' ? 'light' : 'dark');
+      const active = document.documentElement.getAttribute('data-theme');
+      setTheme(active === 'dark' ? 'light' : 'dark');
     });
 
-    // --- 3. Google Sign-In & Authentication ---
-    function parseJwt(token) {
-      try {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-          return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        return JSON.parse(jsonPayload);
-      } catch(e) {
-        return null;
+    // =========================================================================
+    // 5. Live Business Hours Calculator
+    // =========================================================================
+    function updateLiveStatus() {
+      const now = new Date();
+      const currentHour = now.getHours();
+      const statusText = document.getElementById('live-status-text');
+      const dot = document.getElementById('live-indicator');
+
+      if (currentHour >= 8 && currentHour < 21) {
+        statusText.textContent = "Open Now • Closes at 9:00 PM";
+        dot.style.background = "#10B981";
+        dot.style.boxShadow = "0 0 10px #10B981";
+      } else {
+        statusText.textContent = "Closed for the Night • Opens at 8:00 AM";
+        dot.style.background = "#F59E0B";
+        dot.style.boxShadow = "0 0 10px #F59E0B";
       }
     }
+    updateLiveStatus();
 
-    function handleCredentialResponse(response) {
-      const user = parseJwt(response.credential);
-      if (user && user.email) {
-        if (user.email.toLowerCase() === AUTHORIZED_EMAIL.toLowerCase()) {
-          sessionStorage.setItem('admin_token', response.credential);
-          sessionStorage.setItem('admin_email', user.email);
-          enableAdminMode();
-          alert("Welcome back, Gethmina! Edit mode enabled. Click text directly to update contacts, hours, or titles.");
-        } else {
-          alert(`Signed in as ${user.email}. Only ${AUTHORIZED_EMAIL} has administrative privileges.`);
-        }
-      }
-    }
+    // =========================================================================
+    // 6. Admin Control Center & Content Management (CMS)
+    // =========================================================================
+    const adminBar = document.getElementById('admin-bar');
 
-    function initGoogleAuth() {
-      if (window.google) {
-        google.accounts.id.initialize({
-          // Replace with your Google Cloud Console Web Client ID:
-          client_id: "526064955332-mbcvsaej1p4eaapt23tlbkoudtmt2s7u.apps.googleusercontent.com",
-          callback: handleCredentialResponse
-        });
-        google.accounts.id.renderButton(
-          document.getElementById("g_id_signin_wrapper"),
-          { theme: "outline", size: "medium", shape: "pill", text: "signin_with" }
-        );
-      }
-    }
-
-    window.addEventListener('load', () => {
-      initGoogleAuth();
-      if (sessionStorage.getItem('admin_email') === AUTHORIZED_EMAIL) {
-        enableAdminMode();
-      }
-      loadSavedContent();
-    });
-
-    // --- 4. Admin Mode Features ---
     function enableAdminMode() {
-      document.body.classList.add('is-admin');
-      document.getElementById('admin-toolbar').style.display = 'block';
-      document.getElementById('g_id_signin_wrapper').style.display = 'none';
+      document.body.classList.add('admin-mode');
+      adminBar.style.display = 'block';
 
-      // Turn on editable flags for all data-edit-id nodes
-      document.querySelectorAll('[data-edit-id]').forEach(el => {
+      // Turn on content editable
+      document.querySelectorAll('[data-edit-key]').forEach(el => {
         el.setAttribute('contenteditable', 'true');
       });
     }
 
-    function logoutAdmin() {
-      sessionStorage.clear();
-      document.body.classList.remove('is-admin');
-      document.getElementById('admin-toolbar').style.display = 'none';
-      document.getElementById('g_id_signin_wrapper').style.display = 'block';
-      document.querySelectorAll('[data-edit-id]').forEach(el => {
+    function exitAdmin() {
+      sessionStorage.removeItem('thejan_admin_logged');
+      document.body.classList.remove('admin-mode');
+      adminBar.style.display = 'none';
+
+      document.querySelectorAll('[data-edit-key]').forEach(el => {
         el.removeAttribute('contenteditable');
       });
       alert('Signed out of admin mode.');
     }
 
-    // --- 5. Image Replacement (File or URL) ---
-    let targetImageId = null;
-    const filePicker = document.getElementById('admin-file-picker');
+    // =========================================================================
+    // 7. Gallery Image Uploader Controller
+    // =========================================================================
+    let activeImageSlotId = null;
+    const fileInput = document.getElementById('image-file-input');
 
-    function replaceImage(imgElementId) {
-      targetImageId = imgElementId;
-      const choice = confirm("Press [OK] to upload an image from your device, or [Cancel] to paste an image URL.");
+    function replaceImageSlot(imgId) {
+      activeImageSlotId = imgId;
+      const choice = confirm("Press [OK] to upload a photo from your computer/phone, or [Cancel] to paste an image URL.");
       if (choice) {
-        filePicker.click();
+        fileInput.click();
       } else {
-        const url = prompt("Paste the image URL (e.g. from Google Maps or hosting site):");
+        const url = prompt("Paste direct image link (e.g. from Google Maps or cloud hosting):");
         if (url) {
-          const img = document.getElementById(targetImageId);
+          const img = document.getElementById(activeImageSlotId);
           if (img) {
             img.src = url;
-            saveImageToStorage(targetImageId, url);
+            saveImageRecord(activeImageSlotId, url);
           }
         }
       }
     }
 
-    filePicker.addEventListener('change', function() {
-      if (this.files && this.files[0] && targetImageId) {
+    fileInput.addEventListener('change', function() {
+      if (this.files && this.files[0] && activeImageSlotId) {
         const reader = new FileReader();
         reader.onload = function(e) {
-          const dataUrl = e.target.result;
-          document.getElementById(targetImageId).src = dataUrl;
-          saveImageToStorage(targetImageId, dataUrl);
+          const result = e.target.result;
+          document.getElementById(activeImageSlotId).src = result;
+          saveImageRecord(activeImageSlotId, result);
         };
         reader.readAsDataURL(this.files[0]);
       }
     });
 
-    function saveImageToStorage(id, src) {
-      let savedImages = JSON.parse(localStorage.getItem('thejan_images') || '{}');
-      savedImages[id] = src;
-      localStorage.setItem('thejan_images', JSON.stringify(savedImages));
+    function saveImageRecord(id, src) {
+      let images = JSON.parse(localStorage.getItem('thejan_custom_images') || '{}');
+      images[id] = src;
+      localStorage.setItem('thejan_custom_images', JSON.stringify(images));
     }
 
-    // --- 6. Content Persistence (localStorage) ---
-    function saveAllChanges() {
-      const content = {};
-      document.querySelectorAll('[data-edit-id]').forEach(el => {
-        const key = el.getAttribute('data-edit-id');
-        content[key] = el.innerHTML;
+    // =========================================================================
+    // 8. Content Persistence & Synchronizer
+    // =========================================================================
+    function saveEdits() {
+      const edits = {};
+      document.querySelectorAll('[data-edit-key]').forEach(el => {
+        const key = el.getAttribute('data-edit-key');
+        edits[key] = el.innerHTML;
       });
-      localStorage.setItem('thejan_content', JSON.stringify(content));
+      localStorage.setItem('thejan_saved_content', JSON.stringify(edits));
 
-      // Also sync tel: link if contact number changed
-      const phoneText = document.querySelector('[data-edit-id="contact-phone-val"]');
+      // Sync phone number to dial links
+      const phoneText = document.querySelector('[data-edit-key="contact-phone-number"]');
       if (phoneText) {
         const clean = phoneText.innerText.replace(/[^0-9+]/g, '');
-        const callBtn = document.getElementById('header-call-btn');
-        const heroPhone = document.getElementById('hero-phone-link');
-        if (callBtn) callBtn.href = "tel:" + clean;
-        if (heroPhone) heroPhone.href = "tel:" + clean;
+        const navCall = document.getElementById('header-phone-btn');
+        const heroCall = document.getElementById('hero-call-link');
+        if (navCall) navCall.href = 'tel:' + clean;
+        if (heroCall) heroCall.href = 'tel:' + clean;
       }
 
-      alert("All content and contact details have been saved successfully!");
+      alert("Changes saved successfully to browser storage!");
     }
 
-    function loadSavedContent() {
-      // Load Texts
-      const saved = localStorage.getItem('thejan_content');
+    function loadSavedEdits() {
+      // Load saved text
+      const saved = localStorage.getItem('thejan_saved_content');
       if (saved) {
         try {
-          const content = JSON.parse(saved);
-          Object.keys(content).forEach(key => {
-            const el = document.querySelector(`[data-edit-id="${key}"]`);
-            if (el) el.innerHTML = content[key];
+          const parsed = JSON.parse(saved);
+          Object.keys(parsed).forEach(k => {
+            const el = document.querySelector(`[data-edit-key="${k}"]`);
+            if (el) el.innerHTML = parsed[k];
           });
-        } catch(e) { console.error(e); }
+        } catch(err) { console.error(err); }
       }
 
-      // Load Images
-      const savedImgs = localStorage.getItem('thejan_images');
+      // Load saved images
+      const savedImgs = localStorage.getItem('thejan_custom_images');
       if (savedImgs) {
         try {
           const imgs = JSON.parse(savedImgs);
@@ -692,17 +1272,25 @@
             const el = document.getElementById(id);
             if (el) el.src = imgs[id];
           });
-        } catch(e) { console.error(e); }
+        } catch(err) { console.error(err); }
       }
     }
 
-    function resetToDefault() {
-      if (confirm("Reset all custom text and images to default?")) {
-        localStorage.removeItem('thejan_content');
-        localStorage.removeItem('thejan_images');
+    function resetDefaultContent() {
+      if (confirm("Reset all text changes and custom uploaded photos back to default?")) {
+        localStorage.removeItem('thejan_saved_content');
+        localStorage.removeItem('thejan_custom_images');
         window.location.reload();
       }
     }
+
+    // Auto-restore admin session if previously authenticated
+    window.addEventListener('load', () => {
+      loadSavedEdits();
+      if (sessionStorage.getItem('thejan_admin_logged') === 'true') {
+        enableAdminMode();
+      }
+    });
   </script>
 </body>
 </html>
